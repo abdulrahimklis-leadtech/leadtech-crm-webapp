@@ -7,5 +7,6 @@ export default [
     index("routes/home.tsx"),
     route("customers", "modules/customers/routes/customers.tsx"),
     route("transactions", "modules/transactions/routes/transactions.tsx"),
+    route("invite", "modules/invite/routes/invite-users.tsx"),
   ]),
 ] satisfies RouteConfig;

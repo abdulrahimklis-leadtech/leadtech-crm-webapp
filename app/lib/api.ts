@@ -204,6 +204,23 @@ export interface AuthResponse {
 // Alias for backwards compatibility
 export type LoginResponse = AuthResponse;
 
+export interface InviteUserRequest {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName?: string;
+}
+
+export interface InviteUserResponse {
+  message: string;
+  user: {
+    id: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+  };
+}
+
 export const authApi = {
   login: (data: LoginRequest) => api.post<AuthResponse>("/auth/login", data),
   register: (data: RegisterRequest) => api.post<AuthResponse>("/auth/register", data),
@@ -213,6 +230,8 @@ export const authApi = {
       "/auth/refresh",
       { refreshToken }
     ),
+  inviteUser: (data: InviteUserRequest) =>
+    api.post<InviteUserResponse>("/auth/invite", data),
 };
 
 // Users/Customers API

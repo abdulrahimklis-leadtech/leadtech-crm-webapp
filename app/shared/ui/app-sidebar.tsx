@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router";
-import { Users, CreditCard, LayoutDashboard } from "lucide-react";
+import { Users, CreditCard, LayoutDashboard, UserPlus } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -27,6 +27,11 @@ const menuItems = [
     title: "Transactions",
     url: "/transactions",
     icon: CreditCard,
+  },
+  {
+    title: "Invite Users",
+    url: "/invite",
+    icon: UserPlus,
   },
 ];
 

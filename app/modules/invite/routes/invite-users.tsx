@@ -1,0 +1,151 @@
+import { useState } from "react";
+import type { Route } from "./+types/invite-users";
+import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "~/components/ui/card";
+import { authApi } from "~/lib/api";
+import { UserPlus, CheckCircle2 } from "lucide-react";
+
+export function meta({}: Route.MetaArgs) {
+  return [
+    { title: "Invite Users | LeadtechCRM" },
+    { name: "description", content: "Invite new users to LeadtechCRM" },
+  ];
+}
+
+export default function InviteUsers() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setSuccess(null);
+    setIsLoading(true);
+
+    try {
+      const response = await authApi.inviteUser({
+        email,
+        password,
+        firstName,
+        lastName: lastName || undefined,
+      });
+      setSuccess(`Successfully invited ${response.user.email}`);
+      // Reset form
+      setEmail("");
+      setPassword("");
+      setFirstName("");
+      setLastName("");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to invite user");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="py-4">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold tracking-tight">Invite Users</h1>
+        <p className="text-muted-foreground text-sm mt-1">
+          Invite new team members to join LeadtechCRM.
+        </p>
+      </div>
+
+      <Card className="max-w-lg">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <UserPlus className="h-5 w-5" />
+            New User Invitation
+          </CardTitle>
+          <CardDescription>
+            Fill in the details below to invite a new user to the platform.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {error && (
+              <div className="p-3 text-sm text-red-500 bg-red-50 border border-red-200 rounded-md">
+                {error}
+              </div>
+            )}
+            {success && (
+              <div className="p-3 text-sm text-green-600 bg-green-50 border border-green-200 rounded-md flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4" />
+                {success}
+              </div>
+            )}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="firstName">First Name *</Label>
+                <Input
+                  id="firstName"
+                  type="text"
+                  placeholder="John"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  required
+                  disabled={isLoading}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="lastName">Last Name</Label>
+                <Input
+                  id="lastName"
+                  type="text"
+                  placeholder="Doe"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  disabled={isLoading}
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="email">Email *</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="user@leadtech.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                disabled={isLoading}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password *</Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="Minimum 8 characters"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={8}
+                disabled={isLoading}
+              />
+              <p className="text-xs text-muted-foreground">
+                Password must be at least 8 characters long.
+              </p>
+            </div>
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? "Sending Invitation..." : "Send Invitation"}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
