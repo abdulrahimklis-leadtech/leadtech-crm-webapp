@@ -34,6 +34,7 @@ steps:
           --platform managed \
           --allow-unauthenticated \
           --set-env-vars VITE_API_URL=https://leadtech-crm-backend-110642273202.europe-west1.run.app,NODE_ENV=dev1
+    entrypoint: bash
 
 # Substitution variables (can be overridden in trigger configuration)
 substitutions:
